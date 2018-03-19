@@ -1,7 +1,7 @@
 #![no_std]
 use core::ops::Range;
 
-pub(crate) trait OffsetSize {
+pub trait OffsetSize {
     fn offset(self) -> u8;
     fn size(self) -> u8;
 }
