@@ -46,7 +46,7 @@ macro_rules! register {
         // FIXME: does copying make sense?
         // FIXME: pub(crate) or just pub
         #[derive(Clone, Copy)]
-        pub(crate) struct $REGISTER<MODE> {
+        pub struct $REGISTER<MODE> {
             bits: $uux,
             _mode: PhantomData<MODE>
         }
@@ -78,7 +78,7 @@ macro_rules! register {
         #[allow(non_snake_case)]
         #[allow(dead_code)]
         // Constructor
-        pub(crate) fn $REGISTER(bits: $uux) -> $REGISTER<Read> {
+        pub fn $REGISTER(bits: $uux) -> $REGISTER<Read> {
             $REGISTER { bits, _mode: PhantomData}
         }
 
