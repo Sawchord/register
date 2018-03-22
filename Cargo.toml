@@ -3,4 +3,10 @@ name = "register"
 version = "0.1.0"
 authors = ["Leon Tan <leon.arian.tan@gmail.com>"]
 
-[dependencies]
+[dependencies.byteorder]
+default-features = false
+version = "^1.2.1"
+
+[dependencies.num]
+default-features = false
+version = "^0.1.42"

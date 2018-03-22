@@ -1,5 +1,14 @@
 #![no_std]
+
+extern crate byteorder;
+
+use core::mem;
 use core::ops::Range;
+use byteorder::{ByteOrder, BE, LE};
+
+
+extern crate num;
+use num::Integer;
 
 pub trait OffsetSize {
     fn offset(self) -> u8;
@@ -24,6 +33,10 @@ impl OffsetSize for Range<u8> {
     fn size(self) -> u8 {
         self.end - self.start
     }
+}
+
+pub trait RegisterGet<N: Integer> {
+    fn get(&self) -> N;
 }
 
 // The access traits of the registers
@@ -53,14 +66,14 @@ macro_rules! register {
 
         impl $REGISTER<Mask> {
             #[allow(dead_code)]
-            pub(crate) fn mask() -> $REGISTER<Mask> {
+            pub fn mask() -> $REGISTER<Mask> {
                 $REGISTER { bits: 0, _mode: PhantomData}
             }
 
             $(
                 #[$($attr)*]
                 #[allow(dead_code)]
-                pub(crate) fn $bitfield(&self) -> $uux {
+                pub fn $bitfield(&self) -> $uux {
                     let size = $range.size();
                     let offset = $range.offset();
 
@@ -69,9 +82,15 @@ macro_rules! register {
             )+
         }
 
-        impl Default for $REGISTER<Write> {
+        impl<MODE> Default for $REGISTER<MODE> {
             fn default() -> Self {
                 $REGISTER { bits: $reset_value, _mode: PhantomData}
+            }
+        }
+
+        impl<MODE> RegisterGet<$uux> for $REGISTER<MODE> {
+            fn get(&self) -> $uux {
+                self.bits
             }
         }
 
@@ -84,14 +103,14 @@ macro_rules! register {
 
         impl $REGISTER<Read> {
             #[allow(dead_code)]
-            pub(crate) fn modify(self) -> $REGISTER<Write> {
+            pub fn modify(self) -> $REGISTER<Write> {
                 $REGISTER { bits: self.bits, _mode: PhantomData}
             }
 
             $(
                 #[$($attr)*]
                 #[allow(dead_code)]
-                pub(crate) fn $bitfield(&self) -> $uux {
+                pub fn $bitfield(&self) -> $uux {
                     let size = $range.size();
                     let offset = $range.size();
 
@@ -104,14 +123,14 @@ macro_rules! register {
 
         impl $REGISTER<Write> {
             #[allow(dead_code)]
-            pub(crate) fn bits(self) -> $uux {
+            pub fn bits(self) -> $uux {
                 self.bits
             }
 
             $(
                 #[$($attr)*]
                 #[allow(dead_code)]
-                pub(crate) fn $bitfield(&mut self, mut bits: $uux) -> &mut Self {
+                pub fn $bitfield(&mut self, mut bits: $uux) -> &mut Self {
 
                     let offset = $range.offset();
                     let size = $range.size();
