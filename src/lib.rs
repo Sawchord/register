@@ -6,10 +6,6 @@ use core::mem;
 use core::ops::Range;
 use byteorder::{ByteOrder, BE, LE};
 
-
-extern crate num;
-use num::Integer;
-
 pub trait OffsetSize {
     fn offset(self) -> u8;
     fn size(self) -> u8;
@@ -35,7 +31,7 @@ impl OffsetSize for Range<u8> {
     }
 }
 
-pub trait RegisterGet<N: Integer> {
+pub trait RegisterGet<N> {
     fn get(&self) -> N;
 }
 
@@ -156,6 +152,7 @@ mod tests {
 
     use {Mask, Read, Write};
     use OffsetSize;
+    use RegisterGet;
 
     #[test]
     fn it_works() {
